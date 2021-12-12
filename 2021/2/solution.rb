@@ -3,31 +3,31 @@ DIRECTIONS = [:forward, :up, :down]
 Movement = Struct.new(:direction, :units)
 Position = Struct.new(:horizontal, :depth, :aim)
 
-def calculatePosition(movements, initialPosition)
-    finalPosition = initialPosition
+def calculate_position(movements, initial_position)
+    final_position = initial_position
     for movement in movements
         case movement.direction
         when :forward
-            finalPosition.horizontal += movement.units
-            finalPosition.depth += finalPosition.aim * movement.units
+            final_position.horizontal += movement.units
+            final_position.depth += final_position.aim * movement.units
         when :up
-            finalPosition.aim -= movement.units
+            final_position.aim -= movement.units
         when :down
-            finalPosition.aim += movement.units
+            final_position.aim += movement.units
         end
     end
 
-    return finalPosition
+    return final_position
 end
 
-def parseMovements(fileName)
+def parse_movements(file_name)
     movements = []
-    File.open(File.join(File.dirname(__FILE__), fileName)).each do |line|
-        splitMovement = line.split(" ")
+    File.open(File.join(File.dirname(__FILE__), file_name)).each do |line|
+        split_movement = line.split(" ")
 
-        raise "Direction not found for line: '#{line}'" unless direction = splitMovement[0]
+        raise "Direction not found for line: '#{line}'" unless direction = split_movement[0]
         raise "Unknown direction: '#{direction}'" unless DIRECTIONS.include? direction.to_sym
-        raise "Unit not found for line: '#{line}'" unless unit = splitMovement[1]
+        raise "Unit not found for line: '#{line}'" unless unit = split_movement[1]
 
         movement = Movement.new
         movement.direction = direction.to_sym
@@ -37,15 +37,14 @@ def parseMovements(fileName)
     return movements
 end
 
-movements = parseMovements("movements.txt")
+movements = parse_movements("movements.txt")
 
-initialPosition = Position.new
-initialPosition.horizontal = 0
-initialPosition.depth = 0
-initialPosition.aim = 0
+initial_position = Position.new
+initial_position.horizontal = 0
+initial_position.depth = 0
+initial_position.aim = 0
 
-finalPosition = calculatePosition(movements, initialPosition)
-puts finalPosition
+final_position = calculate_position(movements, initial_position)
 
-result = finalPosition.horizontal * finalPosition.depth
+result = final_position.horizontal * final_position.depth
 puts "Multiplied result: #{result}"

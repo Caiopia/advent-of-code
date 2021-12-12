@@ -1,121 +1,121 @@
 # - Common
 
-DiagnosticReport = Struct.new(:binaryNumbers, :numberOfBits)
+DiagnosticReport = Struct.new(:binary_numbers, :number_of_bits)
 
-def parseDiagnosticReport(fileName)
-    binaryNumbers = []
-    File.open(File.join(File.dirname(__FILE__), fileName)).each do |line|
-        binaryNumbers.append(line.strip())
+def parse_diagnostic_report(file_name)
+    binary_numbers = []
+    File.open(File.join(File.dirname(__FILE__), file_name)).each do |line|
+        binary_numbers.append(line.strip())
     end
 
     # validate report
-    raise "No codes in diagnostic report" if binaryNumbers.empty?
+    raise "No codes in diagnostic report" if binary_numbers.empty?
 
-    numberOfBits = binaryNumbers.first.length
-    for binaryNumber in binaryNumbers
-        raise "Differently sized codes in diagnostic report" unless binaryNumber.length == numberOfBits
+    number_of_bits = binary_numbers.first.length
+    for binary_number in binary_numbers
+        raise "Differently sized codes in diagnostic report" unless binary_number.length == number_of_bits
     end
 
-    diagnosticReport = DiagnosticReport.new
-    diagnosticReport.binaryNumbers = binaryNumbers
-    diagnosticReport.numberOfBits = numberOfBits
+    diagnostic_report = DiagnosticReport.new
+    diagnostic_report.binary_numbers = binary_numbers
+    diagnostic_report.number_of_bits = number_of_bits
 
-    return diagnosticReport
+    return diagnostic_report
 end
 
-def bitsAtIndex(binaryNumbers, index)
-    bitsAtIndex = Hash.new(0)
-    for binaryNumber in binaryNumbers
-        bitAtIndex = binaryNumber[index]
-        bitsAtIndex[bitAtIndex] += 1
+def bits_at_index(binary_numbers, index)
+    bits_at_index = Hash.new(0)
+    for binary_number in binary_numbers
+        bit_at_index = binary_number[index]
+        bits_at_index[bit_at_index] += 1
     end
 
-    return bitsAtIndex
+    return bits_at_index
 end
 
 # - Part 1
 
-def calculateGammaRate(diagnosticReport)
-    gammaRate = ""
-    for index in 0...diagnosticReport.numberOfBits 
-        bitsAtIndex = bitsAtIndex(diagnosticReport.binaryNumbers, index)
-        mostCommonBitAtIndex = bitsAtIndex.key(bitsAtIndex.values.max)
-        gammaRate.concat(mostCommonBitAtIndex)
+def calculate_gamma_rate(diagnostic_report)
+    gamma_rate = ""
+    for index in 0...diagnostic_report.number_of_bits 
+        bits_at_index = bits_at_index(diagnostic_report.binary_numbers, index)
+        most_common_bit_at_index = bits_at_index.key(bits_at_index.values.max)
+        gamma_rate.concat(most_common_bit_at_index)
     end
 
-    return gammaRate
+    return gamma_rate
 end
 
-def calculateEpsilonRate(diagnosticReport)
-    epsilonRate = ""
-    for index in 0...diagnosticReport.numberOfBits 
-        bitsAtIndex = bitsAtIndex(diagnosticReport.binaryNumbers, index)
-        leastCommonBitAtIndex = bitsAtIndex.key(bitsAtIndex.values.min)
-        epsilonRate.concat(leastCommonBitAtIndex)
+def calculate_epsilon_rate(diagnostic_report)
+    epsilon_rate = ""
+    for index in 0...diagnostic_report.number_of_bits 
+        bits_at_index = bits_at_index(diagnostic_report.binary_numbers, index)
+        least_common_bit_at_index = bits_at_index.key(bits_at_index.values.min)
+        epsilon_rate.concat(least_common_bit_at_index)
     end
 
-    return epsilonRate
+    return epsilon_rate
 end
 
-def calculatePowerConsumption(diagnosticReport)
-    gammaRate = calculateGammaRate(diagnosticReport)
-    epsilonRate = calculateEpsilonRate(diagnosticReport)
-    powerConsumption = gammaRate.to_i(2) * epsilonRate.to_i(2)
+def calculate_power_consumption(diagnostic_report)
+    gamma_rate = calculate_gamma_rate(diagnostic_report)
+    epsilon_rate = calculate_epsilon_rate(diagnostic_report)
+    power_consumption = gamma_rate.to_i(2) * epsilon_rate.to_i(2)
 
-    return powerConsumption
+    return power_consumption
 end
 
 # - Part 2
 
-def filterDiagnosticReport(diagnosticReport, bitCriteria)
-    candidates = diagnosticReport.binaryNumbers
-    for index in 0...diagnosticReport.numberOfBits
+def filter_diagnostic_report(diagnostic_report, bit_criteria)
+    candidates = diagnostic_report.binary_numbers
+    for index in 0...diagnostic_report.number_of_bits
         break if candidates.length == 1
-        conditionBit = bitCriteria.call(candidates, index)
-        candidates = candidates.select { |candidate| candidate[index] == conditionBit }
+        condition_bit = bit_criteria.call(candidates, index)
+        candidates = candidates.select { |candidate| candidate[index] == condition_bit }
     end
 
     return candidates
 end
 
-def calculateOxygenGeneratorRating(diagnosticReport)
-    bitCriteria = -> (candidates, index) {
-        bitsAtIndex = bitsAtIndex(candidates, index)
-        mostCommonBitAtIndex = bitsAtIndex.values.uniq.length != 1 ? bitsAtIndex.key(bitsAtIndex.values.max) : "1"
-        return mostCommonBitAtIndex
+def calculate_oxygen_generator_rating(diagnostic_report)
+    bit_criteria = -> (candidates, index) {
+        bits_at_index = bits_at_index(candidates, index)
+        most_common_bit_at_index = bits_at_index.values.uniq.length != 1 ? bits_at_index.key(bits_at_index.values.max) : "1"
+        return most_common_bit_at_index
     }
 
-    oxygenGeneratorRatingCandidates = filterDiagnosticReport(diagnosticReport, bitCriteria)
+    oxygen_generator_rating_candidates = filter_diagnostic_report(diagnostic_report, bit_criteria)
 
-    raise "Found multiple candidates for oxygen generator rating: #{oxygenGeneratorRatingCandidates}" unless oxygenGeneratorRatingCandidates.length == 1
-    return oxygenGeneratorRatingCandidates.first
+    raise "Found multiple candidates for oxygen generator rating: #{oxygen_generator_rating_candidates}" unless oxygen_generator_rating_candidates.length == 1
+    return oxygen_generator_rating_candidates.first
 end
 
-def calculateCo2ScrubberRating(diagnosticReport)
-    bitCriteria = -> (candidates, index) {
-        bitsAtIndex = bitsAtIndex(candidates, index)
-        leastCommonBitAtIndex = bitsAtIndex.values.uniq.length != 1 ? bitsAtIndex.key(bitsAtIndex.values.min) : "0"
-        return leastCommonBitAtIndex
+def calculate_co2_scrubber_rating(diagnostic_report)
+    bit_criteria = -> (candidates, index) {
+        bits_at_index = bits_at_index(candidates, index)
+        least_common_bit_at_index = bits_at_index.values.uniq.length != 1 ? bits_at_index.key(bits_at_index.values.min) : "0"
+        return least_common_bit_at_index
     }
 
-    co2ScrubberRatingCandidates = filterDiagnosticReport(diagnosticReport, bitCriteria)
+    co2_scrubber_rating_candidates = filter_diagnostic_report(diagnostic_report, bit_criteria)
 
-    raise "Found multiple candidates for CO2 scrubber rating: #{co2ScrubberRatingCandidates}" unless co2ScrubberRatingCandidates.length == 1
-    return co2ScrubberRatingCandidates.first
+    raise "Found multiple candidates for CO2 scrubber rating: #{co2_scrubber_rating_candidates}" unless co2_scrubber_rating_candidates.length == 1
+    return co2_scrubber_rating_candidates.first
 end
 
-def calculateLifeSupportRating(diagnosticReport)
-    oxygenGeneratorRating = calculateOxygenGeneratorRating(diagnosticReport)    
-    co2ScrubberRating = calculateCo2ScrubberRating(diagnosticReport)
-    lifeSupportRating = oxygenGeneratorRating.to_i(2) * co2ScrubberRating.to_i(2)
+def calculate_life_support_rating(diagnostic_report)
+    oxygen_generator_rating = calculate_oxygen_generator_rating(diagnostic_report)    
+    co2_scrubber_rating = calculate_co2_scrubber_rating(diagnostic_report)
+    life_support_rating = oxygen_generator_rating.to_i(2) * co2_scrubber_rating.to_i(2)
 
-    return lifeSupportRating
+    return life_support_rating
 end
 
-diagnosticReport = parseDiagnosticReport("diagnostic-report.txt")
+diagnostic_report = parse_diagnostic_report("diagnostic-report.txt")
 
-powerConsumption = calculatePowerConsumption(diagnosticReport)
-puts "Power consumption: #{powerConsumption}"
+power_consumption = calculate_power_consumption(diagnostic_report)
+puts "Power consumption: #{power_consumption}"
 
-lifeSupportRating = calculateLifeSupportRating(diagnosticReport)
-puts "Life support rating: #{lifeSupportRating}"
+life_support_rating = calculate_life_support_rating(diagnostic_report)
+puts "Life support rating: #{life_support_rating}"
