@@ -22,7 +22,7 @@ end
 
 def parseMovements(fileName)
     movements = []
-    File.open(fileName).each do |line|
+    File.open(File.join(File.dirname(__FILE__), fileName)).each do |line|
         splitMovement = line.split(" ")
 
         raise "Direction not found for line: '#{line}'" unless direction = splitMovement[0]

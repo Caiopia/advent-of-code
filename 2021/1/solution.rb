@@ -2,7 +2,7 @@
 
 def parseMeasurements(fileName)
     measurements = []
-    File.open(fileName).each do |line|
+    File.open(File.join(File.dirname(__FILE__), fileName)).each do |line|
         integerMeasurement = Integer(line)
         measurements.append(integerMeasurement)
     end
