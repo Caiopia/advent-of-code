@@ -19,7 +19,7 @@ def multiply_lanternfish(lanternfish, num_days, reproduction_days, new_reproduct
         max_range = [reproduction_days, new_reproduction_days].max
         range = (0..max_range)
 
-        # Extract the previous day's values
+        # Extract the previous day's values, might be able to reduce this to 1 hash?
         range.each { |num|
             old_timers[num] = !lanternfish_timers["#{num}"].nil? ? lanternfish_timers["#{num}"] : 0 if num <= reproduction_days
             new_timers[num] = !lanternfish_timers["new#{num}"].nil? ? lanternfish_timers["new#{num}"] : 0 if num <= new_reproduction_days
