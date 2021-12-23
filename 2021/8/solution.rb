@@ -130,7 +130,6 @@ end
 def sum_of_outputs(entries)
     entries.map { |entry|
         output = output_mappings_for_entry(entry)
-        # puts output
         output.join.to_i
     }.sum
 end
